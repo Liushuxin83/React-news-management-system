@@ -1,11 +1,9 @@
 import React from 'react'
 import IndexRouter from './router/indexRouter'
-import './App.css'
+import './App.scss'
 export default function App() {
 	return (
-		<div>
-			<IndexRouter></IndexRouter>
-		</div>
+		<IndexRouter></IndexRouter>
 	)
 }
 
