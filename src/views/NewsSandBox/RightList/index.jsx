@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Table, Tag, Tooltip, Button, Breadcrumb, Modal, Popover, Switch } from 'antd'
+import { Table, Tag, Tooltip, Button, Breadcrumb, Modal, Popover, Switch, message } from 'antd'
 import {
 	EditOutlined,
 	DeleteOutlined,
 	ExclamationCircleOutlined
 } from '@ant-design/icons';
-import { getRightList, deleteRightItem, deleteChildRightItem } from '../../../network/right.js'
+import {
+	getRightList,
+	deleteRightItem,
+	deleteChildRightItem,
+	changeChildPagepermission,
+	changePagepermission
+} from '../../../network/right.js'
 // 发布订阅模式 通信
 import PubSub from 'pubsub-js'
 const { confirm } = Modal;
@@ -43,7 +49,7 @@ export default function RightList(props) {
 						</Tooltip>
 						&nbsp;	&nbsp;	&nbsp;
 						<Popover title="配置项" content={<div style={{ textAlign: 'center' }}>
-							<Switch></Switch>
+							<Switch checked={item.pagepermisson} onChange={() => changeSwitch(item)}></Switch>
 						</div>} trigger={item.pagepermisson === undefined ? '' : 'click'}>
 							<Button type="primary" shape="circle" icon={<EditOutlined />} disabled={item.pagepermisson === undefined} />
 						</Popover>
@@ -52,6 +58,31 @@ export default function RightList(props) {
 			},
 		}
 	];
+	//点击switch开关
+	const changeSwitch = async (item) => {
+		item.pagepermisson = item.pagepermisson === 1 ? 0 : 1
+		// console.log(item);
+		// 渲染前端页面
+		setDataSource([...dataSource])
+		//更改后端数据
+		if (item.grade === 1) {
+			const { status } = await changePagepermission(item.id, { pagepermisson: item.pagepermisson })
+			// console.log(status);
+			if (status === 200) {
+				PubSub.publish('updataSideMenuData')
+				return message.success(`更改权限配置成功，侧边栏将${item.pagepermisson === 1 ? '拥有' : '失去'}${item.title}权限功能!`, 5);
+			}
+			return message.error('更改权限配置失败！', 5);
+		} else {
+			const { status } = await changeChildPagepermission(item.id, { pagepermisson: item.pagepermisson })
+			// console.log(status);
+			if (status === 200) {
+				PubSub.publish('updataSideMenuData')
+				return message.success(`更改权限配置成功，侧边栏将${item.pagepermisson === 1 ? '拥有' : '失去'}${item.title}权限功能!`, 5);
+			}
+			return message.error('更改权限配置失败！', 5);
+		}
+	}
 	// 点击删除按钮
 	const onIsDelete = (item) => {
 		console.log(item);
@@ -92,7 +123,7 @@ export default function RightList(props) {
 			if (item.children.length === 0) item.children = ''
 		})
 		setDataSource(list)
-		console.log(data);
+		// console.log(data);
 	}
 	useEffect(() => {
 		getRightListData()
