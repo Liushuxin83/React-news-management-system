@@ -1,4 +1,7 @@
 import axios from 'axios'
+// 导入顶部加载条
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 export function request(config) {
 	const instance = axios.create({
 		baseURL: 'http://localhost:5000/',
@@ -8,6 +11,7 @@ export function request(config) {
 	// Add a request interceptor
 	instance.interceptors.request.use(
 		function (config) {
+			NProgress.start()
 			// Do something before request is sent
 			// console.log(config)
 			return config
@@ -24,6 +28,7 @@ export function request(config) {
 			// Any status code that lie within the range of 2xx cause this function to trigger
 			// Do something with response data
 			// console.log(response);
+			NProgress.done()
 			return response
 		},
 		function (error) {

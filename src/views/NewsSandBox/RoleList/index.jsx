@@ -68,7 +68,7 @@ export default function RoleList() {
 				setTreeData(res.data)
 			}
 		})
-	}, [])
+	}, [currentRights])
 	const showDialog = (item) => {
 		// console.log(item);
 		setCurrentRights(item.rights)

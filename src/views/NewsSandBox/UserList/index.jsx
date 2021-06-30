@@ -58,6 +58,10 @@ export default function UserList() {
 			dataIndex: 'username',
 		},
 		{
+			title: '密码',
+			dataIndex: 'password',
+		},
+		{
 			title: '用户状态',
 			dataIndex: 'roleState',
 			render: (roleState, item) => {
@@ -82,17 +86,27 @@ export default function UserList() {
 			},
 		}
 	]
+	const { role: { roleType }, region, id } = JSON.parse(localStorage.getItem('token'))
 	useEffect(() => {
+		const roleObj = {
+			"1": 'superadmin',
+			"2": 'admin',
+			"3": 'editor'
+		}
 		getUsersList().then(res => {
 			if (res.status === 200) {
 				message.success('获取用户列表成功！')
 				console.log(res.data);
-				setDataSource(res.data)
+				setDataSource(roleObj[roleType] === 'superadmin' ? res.data : [
+					// 如果是管理员 先把自己过滤出来然后再把管理员旗下的用户过滤出来  编辑是看不到用户列表的所以不应管了
+					...res.data.filter(item => item.id === id),
+					...res.data.filter(item => item.region === region && roleObj[item.roleId] === 'editor')
+				])
 			} else {
 				message.error('获取角色列表失败！')
 			}
 		})
-	}, [])
+	}, [region, roleType, id])
 	const AddUsersFormRef = useRef(null)
 	const fromRef = useRef(null)
 	const showAddUserModal = () => {

@@ -37,8 +37,13 @@ function SideMenu(props) {
 		'/publish-manage/published': <AppstoreOutlined />,
 		'/publish-manage/sunset': <AppstoreOutlined />,
 	}
+	/**
+	 * 这里用一个isPermission函数来判断此用户是否有权限访问一些侧边栏!!!!!!!!!!!!
+	 */
+	const { role: { rights } } = JSON.parse(localStorage.getItem('token'))
 	const isPermission = (item) => {
-		return item.pagepermisson === 1
+		// 当前登录用户的权限列表如果包括侧边栏列表时  才会显示相应的本用户侧边栏
+		return item.pagepermisson === 1 && rights.includes(item.key)
 	}
 	const renderMenu = (menuList) => {
 		return menuList.map((item) => {

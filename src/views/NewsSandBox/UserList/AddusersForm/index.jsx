@@ -30,6 +30,33 @@ const AddUsersForm = forwardRef(({ cRef, updateDataSource }, ref) => {
 			setRoleList(res.data)
 		})
 	}, [])
+	// 用来判断某个用户权限是否可以选择区域
+	const { roleId, region } = JSON.parse(localStorage.getItem('token'))
+	const roleObj = {
+		"1": 'superadmin',
+		"2": 'admin',
+		"3": 'editor'
+	}
+	const checkRegionDisabled = (item) => {
+		// if (超级管理员) {
+
+		// } else {
+
+		// }
+		if (roleObj[roleId] === 'superadmin') {
+			return false
+		} else {
+			return item.value !== region
+		}
+	}
+	// 用来判断某个用户权限是否可以选择角色
+	const checkRoleDisabled = (item) => {
+		if (roleObj[roleId] === 'superadmin') {
+			return false
+		} else {
+			return roleObj[item.id] !== 'editor'
+		}
+	}
 	return (
 		<Modal
 			visible={isAddModalVisible}
@@ -101,7 +128,7 @@ const AddUsersForm = forwardRef(({ cRef, updateDataSource }, ref) => {
 					<Select disabled={isDisableSelect}>
 						{
 							regionList.map(item => {
-								return <Option value={item.value} key={item.id}>{item.title}</Option>
+								return <Option value={item.value} key={item.id} disabled={checkRegionDisabled(item)}>{item.title}</Option>
 							})
 						}
 					</Select>
@@ -126,7 +153,7 @@ const AddUsersForm = forwardRef(({ cRef, updateDataSource }, ref) => {
 					}}>
 						{
 							roleList.map(item => {
-								return <Option value={item.id} key={item.id}>{item.roleName}</Option>
+								return <Option value={item.id} key={item.id} disabled={checkRoleDisabled(item)}>{item.roleName}</Option>
 							})
 						}
 					</Select>

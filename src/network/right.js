@@ -6,6 +6,18 @@ export function getRightList() {
 		url: 'rights?_embed=children'
 	})
 }
+export function getRightAnd() {
+	return request({
+		method: 'GET',
+		url: 'rights'
+	})
+}
+export function getChildrenAnd() {
+	return request({
+		method: 'GET',
+		url: 'children'
+	})
+}
 
 export function deleteRightItem(id) {
 	return request({

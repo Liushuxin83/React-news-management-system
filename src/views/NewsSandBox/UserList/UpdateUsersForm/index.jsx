@@ -33,6 +33,33 @@ const UpdateUsersForm = (props, ref) => {
 	useEffect(() => {
 		setIsDisableSelect(props.isSelectDisable)
 	}, [props.isSelectDisable])
+	// 用来判断某个用户权限是否可以选择区域
+	const { roleId } = JSON.parse(localStorage.getItem('token'))
+	const roleObj = {
+		"1": 'superadmin',
+		"2": 'admin',
+		"3": 'editor'
+	}
+	const checkRegionDisabled = () => {
+		// if (超级管理员) {
+
+		// } else {
+
+		// }
+		if (roleObj[roleId] === 'superadmin') {
+			return false
+		} else {
+			return true
+		}
+	}
+	// 用来判断某个用户权限是否可以选择角色
+	const checkRoleDisabled = (item) => {
+		if (roleObj[roleId] === 'superadmin') {
+			return false
+		} else {
+			return roleObj[item.id] !== 'editor'
+		}
+	}
 	return (
 		<Form
 			// layout="vertical"
@@ -75,7 +102,7 @@ const UpdateUsersForm = (props, ref) => {
 				<Select disabled={isDisableSelect}>
 					{
 						regionList.map(item => {
-							return <Option value={item.value} key={item.id}>{item.title}</Option>
+							return <Option value={item.value} key={item.id} disabled={checkRegionDisabled()}>{item.title}</Option>
 						})
 					}
 				</Select>
@@ -100,7 +127,7 @@ const UpdateUsersForm = (props, ref) => {
 				}}>
 					{
 						roleList.map(item => {
-							return <Option value={item.id} key={item.id}>{item.roleName}</Option>
+							return <Option value={item.id} key={item.id} disabled={checkRoleDisabled(item)}>{item.roleName}</Option>
 						})
 					}
 				</Select>
