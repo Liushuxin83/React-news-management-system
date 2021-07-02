@@ -7,7 +7,9 @@ import RightList from '../views/NewsSandBox/RightList'
 import NoPermission from '../views/NewsSandBox/NoPermission'
 import WrittenNews from '../views/NewsSandBox/newsManage/WrittenNews'
 import Draft from '../views/NewsSandBox/newsManage/Draft'
+import UpdateNewsPreview from '../views/NewsSandBox/newsManage/UpdateNewsPreview'
 import NewsCategory from '../views/NewsSandBox/newsManage/NewsCategory'
+import NewsPreview from '../views/NewsSandBox/newsManage/NewsPreview'
 import ExamineNews from '../views/NewsSandBox/examineManage/ExamineNews'
 import ExamineList from '../views/NewsSandBox/examineManage/ExamineList'
 import ToBePublish from '../views/NewsSandBox/publishManage/ToBePublish'
@@ -23,8 +25,10 @@ export default function NewsSandBoxRouter() {
 		"/right-manage/right/list": RightList,
 		"/news-manage/add": WrittenNews,
 		"/news-manage/draft": Draft,
+		"/news-manage/update/:id": UpdateNewsPreview,
 		"/news-manage/category": NewsCategory,
 		"/audit-manage/audit": ExamineNews,
+		"/news-manage/preview/:id": NewsPreview,
 		"/audit-manage/list": ExamineList,
 		"/publish-manage/unpublished": ToBePublish,
 		"/publish-manage/published": Published,
@@ -34,11 +38,12 @@ export default function NewsSandBoxRouter() {
 		Promise.all([getRightAnd(), getChildrenAnd()]).then(res => {
 			// console.log(res);
 			setBackRoute([...res[0].data, ...res[1].data])
-			console.log([...res[0].data, ...res[1].data]);
+			// console.log([...res[0].data, ...res[1].data]); 
 		})
 	}, [])
 	const checkRoute = (item) => {
-		return routerMap[item.key] && item.pagepermisson
+		// 列表跳详情的时候  没有pagepermisson字段而是routepermisson字段
+		return routerMap[item.key] && (item.pagepermisson || item.routepermisson)
 	}
 	const { role: { rights } } = JSON.parse(localStorage.getItem('token'))
 	const checkUserPermission = (item) => {

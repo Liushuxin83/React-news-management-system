@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { PageHeader, Steps, Button, Form, Input, Select, message, notification } from 'antd';
-import { getNewsCategories, saveNews } from '../../../../network/newManage'
-import NewsEditor from './NewsEditor';
+import { getNewsCategories, updateNewsPreview, getNewsPreview } from '../../../../network/newManage'
+import NewsEditor from '../WrittenNews/NewsEditor';
 import { withRouter } from 'react-router-dom'
-import './index.scss'
+import '../WrittenNews/index.scss'
 const { Step } = Steps;
 const { Option } = Select
-function WrittenNews(props) {
+function UpdateNewsPreview(props) {
 	// 当前步骤条的状态
 	const [currentStepsState, setCurrentStepsState] = useState(0)
 	const [categoriesList, setCategoriesList] = useState([])
@@ -19,6 +19,18 @@ function WrittenNews(props) {
 			setCategoriesList(res.data)
 		})
 	}, [])
+	useEffect(() => {
+		// 根据id获取新闻详情
+		getNewsPreview(props.match.params.id).then(res => {
+			// console.log(res.data);
+			let { title, categoryId, content } = res.data
+			newsFormRef.current.setFieldsValue({
+				title,
+				categoryId
+			})
+			setNewContent(content)
+		})
+	}, [props.match.params.id])
 	const handelNext = () => {
 		if (currentStepsState === 0) {
 			newsFormRef.current.validateFields().then(res => {
@@ -39,27 +51,20 @@ function WrittenNews(props) {
 		setCurrentStepsState(currentStepsState - 1)
 	}
 	const getNewsContent = (content) => {
-		console.log(content);
+		// console.log(content);
 		setNewContent(content)
 	}
-	const user = JSON.parse(localStorage.getItem('token'))
 	const handelSave = async (auditState) => {
 		// console.log(auditState);
 		const newsObj = {
 			...newFormInfo,
 			"content": newContent,
-			"region": user.region ? user.region : '全球',
-			"author": user.username,
-			"roleId": user.roleId,
-			auditState,
-			"publishState": 0,
-			"createTime": Date.now(),
-			"star": 0,
-			"view": 0
+			auditState
 		}
-		const { status } = await saveNews(newsObj)
+		const { status } = await updateNewsPreview(props.match.params.id, newsObj)
+		// console.log(status);
 		// console.log(data, status);
-		if (status === 201) {
+		if (status === 200) {
 			props.history.push(auditState === 0 ? '/news-manage/draft' : '/audit-manage/list')
 			notification.info({
 				message: `通知`,
@@ -73,7 +78,8 @@ function WrittenNews(props) {
 	return (
 		<>
 			<PageHeader
-				title="撰写新闻"
+				title="更新新闻"
+				onBack={() => props.history.goBack()}
 			/>
 			<Steps current={currentStepsState} style={{ marginTop: '30px' }}>
 				<Step title="基本信息" description="新闻标题，新闻分类" />
@@ -110,7 +116,7 @@ function WrittenNews(props) {
 					</Form>
 				</div>
 				<div className={currentStepsState === 1 ? '' : 'hidden'}>
-					<NewsEditor getNewsContent={getNewsContent} />
+					<NewsEditor getNewsContent={getNewsContent} content={newContent} />
 				</div>
 				<div className={currentStepsState === 2 ? '' : 'hidden'}>3333333</div>
 			</div>
@@ -131,4 +137,4 @@ function WrittenNews(props) {
 		</>
 	)
 }
-export default withRouter(WrittenNews)
+export default withRouter(UpdateNewsPreview)
