@@ -13,6 +13,7 @@ export default function NewsPreview(props) {
 	}, [props.match.params.id])
 	const auditStateList = ['未审核', '审核中', '已通过', '未通过']
 	const publishStateList = ['未发布', '待发布', '已上线', '已下线']
+	const colorList = ['black', 'orange', 'green', 'red']
 	return (
 		<>
 			{
@@ -30,10 +31,10 @@ export default function NewsPreview(props) {
 							<Descriptions.Item label="发布时间">{newsPreview.publishTime ? moment(newsPreview.publishTime).format('YYYY-MM-DD HH:mm:ss') : '-'}</Descriptions.Item>
 							<Descriptions.Item label="区域">{newsPreview.region}</Descriptions.Item>
 							<Descriptions.Item label="审核状态">
-								<span style={{ color: 'red' }}>{auditStateList[newsPreview.auditState]}</span>
+								<span style={{ color: colorList[newsPreview.auditState] }}>{auditStateList[newsPreview.auditState]}</span>
 							</Descriptions.Item>
 							<Descriptions.Item label="发布状态">
-								<span style={{ color: 'red' }}>{publishStateList[newsPreview.publishState]}</span>
+								<span style={{ color: colorList[newsPreview.publishState] }}>{publishStateList[newsPreview.publishState]}</span>
 							</Descriptions.Item>
 							<Descriptions.Item label="访问数量">{newsPreview.view}</Descriptions.Item>
 							<Descriptions.Item label="点赞数量">{newsPreview.star}</Descriptions.Item>
