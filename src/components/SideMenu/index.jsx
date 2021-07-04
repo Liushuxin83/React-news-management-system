@@ -14,6 +14,7 @@ import {
 import { getSideMenu } from '../../network/sideMenu.js'
 // 发布订阅模式 通信
 import PubSub from 'pubsub-js'
+import { connect } from 'react-redux'
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 function SideMenu(props) {
@@ -71,7 +72,7 @@ function SideMenu(props) {
 	const selectKeys = [props.location.pathname]
 	const openKeys = [`/${props.location.pathname.split('/')[1]}`]
 	return (
-		<Sider trigger={null} collapsible>
+		<Sider trigger={null} collapsible collapsed={props.isCollapsed}>
 			{/* 样式用来控制滚动条的位置在侧边栏 */}
 			<div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
 				<div className="logo">新闻发布系统</div>
@@ -82,4 +83,9 @@ function SideMenu(props) {
 		</Sider>
 	)
 }
-export default withRouter(SideMenu)
+const mapStateToProps = (state) => {
+	return {
+		isCollapsed: state.collapsedReducer.isCollapsed
+	}
+}
+export default connect(mapStateToProps)(withRouter(SideMenu))

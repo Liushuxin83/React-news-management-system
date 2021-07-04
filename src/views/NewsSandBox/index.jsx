@@ -3,9 +3,10 @@ import SideMenu from '../../components/SideMenu'
 import TopHeader from '../../components/TopHeader'
 import NewsSandBoxRouter from '../../router/NewsSandBoxRouter.js'
 import './newsSandBox.scss'
-import { Layout } from 'antd';
+import { Layout, Spin } from 'antd';
+import { connect } from 'react-redux'
 const { Content } = Layout;
-export default function NewsSandBox() {
+function NewsSandBox(props) {
 	return (
 		<Layout>
 			<SideMenu />
@@ -20,9 +21,17 @@ export default function NewsSandBox() {
 						overflow: 'auto'
 					}}
 				>
-					<NewsSandBoxRouter />
+					<Spin size="large" spinning={props.isLoading}>
+						<NewsSandBoxRouter />
+					</Spin>
 				</Content>
 			</Layout>
 		</Layout>
 	)
 }
+const mapStateToProps = (state) => {
+	return {
+		isLoading: state.loadingReducer.isLoading
+	}
+}
+export default connect(mapStateToProps)(NewsSandBox)

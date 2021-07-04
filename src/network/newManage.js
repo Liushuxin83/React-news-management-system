@@ -1,9 +1,27 @@
 import { request } from './request'
 import axios from 'axios'
+//获取新闻分类数据
 export function getNewsCategories() {
 	return request({
 		methdo: "GET",
 		url: 'categories'
+	})
+}
+
+export function deleteNewsCategories(id) {
+	return request({
+		method: 'DELETE',
+		url: `gocateries/${id}`
+	})
+}
+
+export function updateNewsCategories(id, params = {}) {
+	return new Promise((resolve, reject) => {
+		axios.patch(`http://localhost:5000/categories/${id}`, params).then(res => {
+			resolve(res)
+		}).catch(err => {
+			reject(err)
+		})
 	})
 }
 

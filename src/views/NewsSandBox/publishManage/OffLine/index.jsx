@@ -1,9 +1,12 @@
 import React from 'react'
-
-export default function OffLine() {
+import { Button } from 'antd'
+import NewsPublish from '../../../../components/NewsPublish'
+import { usePublish } from '../../../../hooks/usePublish.js'
+export default function Published() {
+	const { data, handelDelete } = usePublish(3)
 	return (
 		<div>
-			OffLine
+			<NewsPublish data={data} publishState={3} button={(item) => <Button type="danger" onClick={() => handelDelete(item)}>删除</Button>}></NewsPublish>
 		</div>
 	)
 }

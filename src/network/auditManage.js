@@ -23,7 +23,7 @@ export function updateAuditState(id) {
 //发布处理  改publishState为2
 export function updatePublisState(id) {
 	return new Promise((resolve, reject) => {
-		axios.patch(`http://localhost:5000/news/${id}`, { publishState: 2 }).then(res => {
+		axios.patch(`http://localhost:5000/news/${id}`, { publishState: 2, publishTime: Date.now() }).then(res => {
 			resolve(res)
 		}).catch(err => {
 			reject(err)
